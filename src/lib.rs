@@ -6,7 +6,7 @@
 /// 
 /// Sometimes you define an enum like this
 /// 
-/// ```Rust
+/// ```
 /// enum Direction {
 ///     Up,
 ///     Left,
@@ -17,7 +17,15 @@
 /// 
 /// and you want to rotate them in some logic,
 /// 
-/// ```Rust
+/// ```
+/// # use rotate_enum::RotateEnum;
+/// # #[derive(RotateEnum, PartialEq, Clone, Copy)]
+/// # enum Direction {
+/// #     Up,
+/// #     Left,
+/// #     Down,
+/// #     Right,
+/// # }
 /// let up = Direction::Up;
 /// let left = Direction::Left;
 /// let down = Direction::Down;
@@ -27,6 +35,11 @@
 /// assert!(left.next() == down);
 /// assert!(down.next() == right);
 /// assert!(right.next() == up);
+/// 
+/// assert!(up.prev() == right);
+/// assert!(left.prev() == up);
+/// assert!(down.prev() == left);
+/// assert!(right.prev() == down);
 /// ```
 /// 
 /// You can of course implement these methods manually, but it's repetitive and error prone.
