@@ -1,0 +1,19 @@
+[package]
+name = "rotate-enum"
+version = "0.1.0"
+authors = ["msakuta <masahiro.sakuta@gmail.com>"]
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[[test]]
+name = "tests"
+path = "tests/progress.rs"
+
+[dev-dependencies]
+trybuild = { version = "1.0", features = ["diff"] }
+
+[dependencies]
+syn = { version = "1.0", features = ["derive", "extra-traits"] }
+quote = "1.0"
