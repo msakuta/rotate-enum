@@ -70,6 +70,15 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, Data, DeriveInput};
 
+/// This derive macro will implement `next()` and `prev()` methods to the
+/// annotated enum.
+///
+/// For code examples, see [module-level docs](index.html).
+///
+/// # Requirements
+///
+/// * It must be applied to an enum. Structs are not supported or won't make sense.
+/// * Enums with any associated data are not supported.
 #[proc_macro_derive(RotateEnum)]
 pub fn rotate_enum(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
