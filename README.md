@@ -28,10 +28,10 @@ assert!(left.next() == down);
 assert!(down.next() == right);
 assert!(right.next() == up);
 
-assert!(up.next() == right);
-assert!(left.next() == right);
-assert!(down.next() == right);
-assert!(right.next() == up);
+assert!(up.prev() == right);
+assert!(left.prev() == up);
+assert!(down.prev() == left);
+assert!(right.prev() == down);
 ```
 
 You can of course implement these methods manually, but it's repetitive and error prone.
