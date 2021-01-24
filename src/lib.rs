@@ -76,7 +76,7 @@ pub fn rotate_enum(input: TokenStream) -> TokenStream {
     let name = input.ident;
 
     let variants = if let Data::Enum(data) = &input.data {
-        data.variants.iter().map(|v| v).collect::<Vec<_>>()
+        data.variants.iter().collect::<Vec<_>>()
     } else {
         panic!("derive(RotateEnum) must be applied to an enum");
     };
