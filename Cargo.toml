@@ -3,6 +3,8 @@ name = "rotate-enum"
 version = "0.1.0"
 authors = ["msakuta <masahiro.sakuta@gmail.com>"]
 edition = "2018"
+description = "A simple macro that implements prev() and next() methods to an enum"
+license = "MIT"
 
 [lib]
 proc-macro = true
