@@ -1,3 +1,5 @@
+![Rust](https://github.com/msakuta/rotate-enum/workflows/Rust/badge.svg)
+
 # rotate-enum crate
 
 A simple macro that implements `prev()` and `next()` methods to an enum in Rust
