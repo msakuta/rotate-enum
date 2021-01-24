@@ -5,6 +5,7 @@ authors = ["msakuta <masahiro.sakuta@gmail.com>"]
 edition = "2018"
 description = "A simple macro that implements prev() and next() methods to an enum"
 license = "MIT"
+repository = "https://github.com/msakuta/rotate-enum"
 
 [lib]
 proc-macro = true
