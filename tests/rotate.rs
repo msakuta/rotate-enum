@@ -8,7 +8,8 @@ enum Direction {
     Right,
 }
 
-fn main() {
+#[test]
+fn test_rotate() {
     let up = Direction::Up;
     let left = Direction::Left;
     let down = Direction::Down;

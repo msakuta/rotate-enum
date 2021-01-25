@@ -1,9 +1,3 @@
-#[test]
-fn tests() {
-    let t = trybuild::TestCases::new();
-    t.pass("tests/direction.rs");
-}
-
 use rotate_enum::ShiftEnum;
 
 #[derive(ShiftEnum, PartialEq, Clone, Copy)]
