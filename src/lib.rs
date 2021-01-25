@@ -178,8 +178,8 @@ pub fn rotate_enum(input: TokenStream) -> TokenStream {
 /// This derive macro will implement `next()` and `prev()` methods that shifts
 /// the variant to the annotated enum.
 ///
-/// * `next()` will return `Some(Variant)` where `Variant` is next one in the enum, or `None` if it was the first variant of the enum.
-/// * `prev()` will return `Some(Variant)` where `Variant` is previous one in the enum, or `None` if it was the last variant of the enum.
+/// * `next()` will return `Some(Variant)` where `Variant` is next one in the enum, or `None` if it was the last variant of the enum.
+/// * `prev()` will return `Some(Variant)` where `Variant` is previous one in the enum, or `None` if it was the first variant of the enum.
 ///
 /// For code examples, see [module-level docs](index.html).
 ///
