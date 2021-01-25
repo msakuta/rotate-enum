@@ -1,4 +1,3 @@
-
 use rotate_enum::RotateEnum;
 
 #[derive(RotateEnum, PartialEq, Clone, Copy)]

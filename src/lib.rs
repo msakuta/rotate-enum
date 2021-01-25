@@ -1,11 +1,11 @@
 //! # rotate-enum crate
-//! 
+//!
 //! This crate provides a simple macro that implements `prev()` and `next()` methods to an enum.
-//! 
+//!
 //! ## Motivation
-//! 
+//!
 //! Sometimes you define an enum like this
-//! 
+//!
 //! ```
 //! enum Direction {
 //!     Up,
@@ -14,9 +14,9 @@
 //!     Right,
 //! }
 //! ```
-//! 
+//!
 //! and you want to rotate them in some logic,
-//! 
+//!
 //! ```
 //! # use rotate_enum::RotateEnum;
 //! # #[derive(RotateEnum, PartialEq, Clone, Copy)]
@@ -30,28 +30,28 @@
 //! let left = Direction::Left;
 //! let down = Direction::Down;
 //! let right = Direction::Right;
-//! 
+//!
 //! assert!(up.next() == left);
 //! assert!(left.next() == down);
 //! assert!(down.next() == right);
 //! assert!(right.next() == up);
-//! 
+//!
 //! assert!(up.prev() == right);
 //! assert!(left.prev() == up);
 //! assert!(down.prev() == left);
 //! assert!(right.prev() == down);
 //! ```
-//! 
+//!
 //! You can of course implement these methods manually, but it's repetitive and error prone.
 //! Don't you think it should be automated?
 //! This crate provides a `RotateEnum` derive macro to just do this.
-//! 
-//! 
+//!
+//!
 //! ## Usage
-//! 
+//!
 //! ```rust
 //! use rotate_enum::RotateEnum;
-//! 
+//!
 //! #[derive(RotateEnum)]
 //! enum Direction {
 //!     Up,
@@ -60,9 +60,7 @@
 //!     Right,
 //! }
 //! ```
-//! 
-
-
+//!
 
 use core::panic;
 
@@ -126,7 +124,7 @@ pub fn rotate_enum(input: TokenStream) -> TokenStream {
     let nexts = variants
         .iter()
         .skip(1)
-        .chain(variants.iter().take(1))
+        .chain(variants.get(0))
         .map(|v| (&v.ident))
         .collect::<Vec<_>>();
 
@@ -139,7 +137,52 @@ pub fn rotate_enum(input: TokenStream) -> TokenStream {
             }
             pub fn prev(self) -> Self {
                 match self {
-                    #(Self::#nexts => Self::#variants,)*
+                    #(Self::#nexts => Self::#variants, )*
+                }
+            }
+        }
+    };
+
+    tokens.into()
+}
+
+#[proc_macro_derive(ShiftEnum)]
+pub fn shift_enum(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+    let name = input.ident;
+
+    let variants = if let Data::Enum(data) = &input.data {
+        data.variants.iter().collect::<Vec<_>>()
+    } else {
+        panic!("derive(RotateEnum) must be applied to an enum");
+    };
+
+    let nexts = variants
+        .iter()
+        .skip(1)
+        .map(|v| quote! { Some(Self::#v) })
+        .chain(Some(quote! { None }))
+        .collect::<Vec<_>>();
+
+    let none_quote = Some(quote! { None });
+    let prevs = variants
+        .iter()
+        .take(variants.len() - 1)
+        .map(|v| quote! { Some(Self::#v) })
+        .collect::<Vec<_>>();
+
+    let prevs = none_quote.iter().chain(&prevs).collect::<Vec<_>>();
+
+    let tokens = quote! {
+        impl #name{
+            pub fn next(self) -> Option<Self> {
+                match self {
+                    #(Self::#variants => #nexts, )*
+                }
+            }
+            pub fn prev(self) -> Option<Self> {
+                match self {
+                    #(Self::#variants => #prevs, )*
                 }
             }
         }
