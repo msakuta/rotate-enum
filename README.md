@@ -2,7 +2,7 @@
 
 # rotate-enum crate
 
-A simple macro that implements `prev()` and `next()` methods to an enum in Rust
+Simple derive macros that implement `prev()` and `next()` methods to an enum in Rust
 
 ## Motivation
 
