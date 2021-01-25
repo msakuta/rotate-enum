@@ -79,6 +79,39 @@ use syn::{parse_macro_input, Data, DeriveInput};
 ///
 /// * It must be applied to an enum. Structs are not supported or won't make sense.
 /// * Enums with any associated data are not supported.
+///
+/// # Generated methods
+///
+/// For example, this macro will implement functions like below for
+/// `enum Direction`.
+///
+/// ```
+/// # enum Direction {
+/// #     Up,
+/// #     Left,
+/// #     Down,
+/// #     Right,
+/// # }
+/// impl Direction {
+///     fn next(self) -> Self {
+///         match self {
+///             Self::Up => Self::Left,
+///             Self::Left => Self::Down,
+///             Self::Down => Self::Right,
+///             Self::Right => Self::Up,
+///         }
+///     }
+///
+///     fn prev(self) -> Self {
+///         match self {
+///             Self::Up => Self::Right,
+///             Self::Left => Self::Up,
+///             Self::Down => Self::Left,
+///             Self::Right => Self::Down,
+///         }
+///     }
+/// }
+/// ```
 #[proc_macro_derive(RotateEnum)]
 pub fn rotate_enum(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
