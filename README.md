@@ -63,6 +63,32 @@ assert!(down.prev() == Some(left));
 assert!(right.prev() == Some(down));
 ```
 
+Note that you can only derive either one of `RotateEnum` or `ShiftEnum`, but not both, because their semantics conflict.
+## Iterating
+
+This crate also provides `IterEnum`, which will implement `Iterator` object
+that yields enum variants in sequence. The first yield result will be the same
+variant as the one started the iterator, i.e. `Direction::Up.iter().next() == Some(Direction::Up)`.
+
+```rust
+let up = Direction::Up;
+let left = Direction::Left;
+let down = Direction::Down;
+let right = Direction::Right;
+
+let mut iter = up.iter();
+assert!(iter.next() == Some(up));
+assert!(iter.next() == Some(left));
+assert!(iter.next() == Some(down));
+assert!(iter.next() == Some(right));
+assert!(iter.next() == None);
+
+assert_eq!(up.iter().collect::<Vec<_>>(), vec![up, left, down, right]);
+```
+
+Note that it is not the same as `ShiftEnum` in the sense that the iterator is one-directional, which means you can go only forward and not `prev()`.
+It can also be used with iterator methods like `collect()`
+
 ## Usage
 
 ```rust

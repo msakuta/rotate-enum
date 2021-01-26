@@ -1,6 +1,6 @@
 //! # rotate-enum crate
 //!
-//! This crate provides a simple macro that implements `prev()` and `next()` methods to an enum.
+//! This crate provides simple macros that implements `prev()` and `next()` methods to an enum.
 //!
 //! ## Motivation
 //!
@@ -76,11 +76,13 @@
 //! assert!(right.prev() == Some(down));
 //! ```
 //!
+//! Note that you can only derive either one of `RotateEnum` or `ShiftEnum`, but not both, because their semantics conflict.
+//!
 //! ## Iterating
 //!
 //! This crate also provides [`IterEnum`], which will implement [`Iterator`] object
 //! that yields enum variants in sequence. The first yield result will be the same
-//! variant as the one started the iterator, i.e. `Direction::Up.iter().next() == Direction::Up`.
+//! variant as the one started the iterator, i.e. `Direction::Up.iter().next() == Some(Direction::Up)`.
 //!
 //! ```
 //! # use rotate_enum::IterEnum;
@@ -122,6 +124,9 @@
 //! ]);
 //! ```
 //!
+//! Note that it is not the same as `ShiftEnum` in the sense that the iterator is one-directional, which means you can go only forward and not `prev()`.
+//! It can also be used with iterator methods like `collect()`.
+//!
 //!
 //! ## Usage
 //!
@@ -137,6 +142,10 @@
 //! }
 //! ```
 //!
+//!
+//! ## Note
+//!
+//! These macros seem trivial, but it's only possible with procedural macros!
 
 use core::panic;
 
