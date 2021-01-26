@@ -76,6 +76,53 @@
 //! assert!(right.prev() == Some(down));
 //! ```
 //!
+//! ## Iterating
+//!
+//! This crate also provides [`IterEnum`], which will implement [`Iterator`] object
+//! that yields enum variants in sequence. The first yield result will be the same
+//! variant as the one started the iterator, i.e. `Direction::Up.iter().next() == Direction::Up`.
+//!
+//! ```
+//! # use rotate_enum::IterEnum;
+//! # #[derive(IterEnum, PartialEq, Clone, Copy, Debug)]
+//! # enum Direction {
+//! #     Up,
+//! #     Left,
+//! #     Down,
+//! #     Right,
+//! # }
+//! let up = Direction::Up;
+//! let left = Direction::Left;
+//! let down = Direction::Down;
+//! let right = Direction::Right;
+//!
+//! let mut iter = up.iter();
+//! assert!(iter.next() == Some(up));
+//! assert!(iter.next() == Some(left));
+//! assert!(iter.next() == Some(down));
+//! assert!(iter.next() == Some(right));
+//! assert!(iter.next() == None);
+//!
+//! assert_eq!(up.iter().collect::<Vec<_>>(), vec![up, left, down, right]);
+//! ```
+//!
+//! Or, you could start from `"YourEnum"Iterator::new()`.
+//!
+//! ```
+//! # use rotate_enum::IterEnum;
+//! # #[derive(IterEnum, PartialEq, Clone, Copy, Debug)]
+//! # enum Direction {
+//! #     Up,
+//! #     Left,
+//! #     Down,
+//! #     Right,
+//! # }
+//! assert_eq!(DirectionIterator::new().collect::<Vec<_>>(), vec![
+//!     Direction::Up, Direction::Left, Direction::Down, Direction::Right,
+//! ]);
+//! ```
+//!
+//!
 //! ## Usage
 //!
 //! ```rust
@@ -258,6 +305,103 @@ pub fn shift_enum(input: TokenStream) -> TokenStream {
                 match self {
                     #(Self::#variants => #prevs, )*
                 }
+            }
+        }
+    };
+
+    tokens.into()
+}
+
+/// This derive macro will implement `iter()` method to the annotated enum that sequentially
+/// yield the variant of the enum.
+///
+/// For code examples, see [module-level docs](index.html).
+///
+/// # Requirements
+///
+/// * It must be applied to an enum. Structs are not supported or won't make sense.
+/// * Enums with any associated data are not supported.
+/// * Enum also needs to derive [`Clone`].
+///
+/// # Generated methods
+///
+/// For example, this macro will implement an iterator and methods like below for
+/// `enum Direction`.
+///
+/// ```
+/// # #[derive(Clone, Debug)]
+/// # enum Direction {
+/// #     Up,
+/// #     Left,
+/// #     Down,
+/// #     Right,
+/// # }
+/// struct DirectionIterator(Option<Direction>);
+///
+/// impl Iterator for DirectionIterator {
+///     type Item = Direction;
+///     fn next(&mut self) -> Option<Self::Item> {
+///         let ret = self.0.clone();
+///         self.0 = match self.0 {
+///             Some(Direction::Up) => Some(Direction::Left),
+///             Some(Direction::Left) => Some(Direction::Down),
+///             Some(Direction::Down) => Some(Direction::Right),
+///             Some(Direction::Right) => None,
+///             None => None,
+///         };
+///         ret
+///     }
+/// }
+/// ```
+#[proc_macro_derive(IterEnum)]
+pub fn iter_enum(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+    let name = input.ident;
+
+    let variants = if let Data::Enum(data) = &input.data {
+        data.variants.iter().collect::<Vec<_>>()
+    } else {
+        panic!("derive(RotateEnum) must be applied to an enum");
+    };
+
+    let first_variant = variants
+        .first()
+        .expect("derive(IterEnum) expects at least one variant in enum");
+
+    let nexts = variants
+        .iter()
+        .skip(1)
+        .map(|v| quote! { Some(#name::#v) })
+        .chain(Some(quote! { None }))
+        .collect::<Vec<_>>();
+
+    let iterator_name = syn::Ident::new(&(name.to_string() + "Iterator"), name.span());
+
+    let tokens = quote! {
+
+        struct #iterator_name(Option<#name>);
+
+        impl #iterator_name {
+            fn new() -> Self {
+                Self(Some(#name::#first_variant))
+            }
+        }
+
+        impl Iterator for #iterator_name {
+            type Item = #name;
+            fn next(&mut self) -> Option<Self::Item> {
+                let ret = self.0.clone();
+                self.0 = match self.0 {
+                    #(Some(#name::#variants) => #nexts, )*
+                    None => None,
+                };
+                ret
+            }
+        }
+
+        impl #name {
+            fn iter(&self) -> #iterator_name {
+                #iterator_name(Some(self.clone()))
             }
         }
     };
