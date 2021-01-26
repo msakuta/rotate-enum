@@ -25,4 +25,14 @@ fn test_shift() {
     assert_eq!(up.iter().collect::<Vec<_>>(), vec![up, left, down, right]);
 
     assert!(Direction::Up.iter().next() == Some(Direction::Up));
+
+    assert_eq!(
+        DirectionIterator::new().collect::<Vec<_>>(),
+        vec![
+            Direction::Up,
+            Direction::Left,
+            Direction::Down,
+            Direction::Right,
+        ]
+    );
 }

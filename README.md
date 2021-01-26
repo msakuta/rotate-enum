@@ -64,6 +64,7 @@ assert!(right.prev() == Some(down));
 ```
 
 Note that you can only derive either one of `RotateEnum` or `ShiftEnum`, but not both, because their semantics conflict.
+
 ## Iterating
 
 This crate also provides `IterEnum`, which will implement `Iterator` object
@@ -87,9 +88,13 @@ assert_eq!(up.iter().collect::<Vec<_>>(), vec![up, left, down, right]);
 ```
 
 Note that it is not the same as `ShiftEnum` in the sense that the iterator is one-directional, which means you can go only forward and not `prev()`.
-It can also be used with iterator methods like `collect()`
+It can also be used with iterator methods like `collect()`.
+
+`IterEnum` also requires deriving `Clone`.
 
 ## Usage
+
+Use `#[derive(...)]` macro to annotate your enum.
 
 ```rust
 use rotate_enum::RotateEnum;
