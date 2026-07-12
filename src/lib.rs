@@ -214,7 +214,7 @@ pub fn rotate_enum(input: TokenStream) -> TokenStream {
     let nexts = variants
         .iter()
         .skip(1)
-        .chain(variants.get(0))
+        .chain(variants.first())
         .collect::<Vec<_>>();
 
     let tokens = quote! {

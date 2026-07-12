@@ -1,4 +1,4 @@
-use rotate_enum::{RotateEnum, ShiftEnum};
+use rotate_enum::RotateEnum;
 
 #[derive(RotateEnum, PartialEq, Clone, Copy, Default)]
 enum Direction {
