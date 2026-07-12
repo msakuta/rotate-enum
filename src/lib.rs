@@ -206,7 +206,7 @@ pub fn rotate_enum(input: TokenStream) -> TokenStream {
     let name = input.ident;
 
     let variants = if let Data::Enum(data) = &input.data {
-        data.variants.iter().collect::<Vec<_>>()
+        data.variants.iter().map(|v| &v.ident).collect::<Vec<_>>()
     } else {
         panic!("derive(RotateEnum) must be applied to an enum");
     };
@@ -215,7 +215,6 @@ pub fn rotate_enum(input: TokenStream) -> TokenStream {
         .iter()
         .skip(1)
         .chain(variants.get(0))
-        .map(|v| (&v.ident))
         .collect::<Vec<_>>();
 
     let tokens = quote! {
@@ -287,7 +286,7 @@ pub fn shift_enum(input: TokenStream) -> TokenStream {
     let name = input.ident;
 
     let variants = if let Data::Enum(data) = &input.data {
-        data.variants.iter().collect::<Vec<_>>()
+        data.variants.iter().map(|v| &v.ident).collect::<Vec<_>>()
     } else {
         panic!("derive(RotateEnum) must be applied to an enum");
     };
@@ -373,7 +372,7 @@ pub fn iter_enum(input: TokenStream) -> TokenStream {
     let name = input.ident;
 
     let variants = if let Data::Enum(data) = &input.data {
-        data.variants.iter().collect::<Vec<_>>()
+        data.variants.iter().map(|v| &v.ident).collect::<Vec<_>>()
     } else {
         panic!("derive(RotateEnum) must be applied to an enum");
     };
